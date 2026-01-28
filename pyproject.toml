@@ -1,0 +1,27 @@
+[project]
+name = "finance-green-agent"
+version = "0.1.0"
+description = "Finance Green Agent with offline A2A server"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi==0.115.6",
+    "uvicorn==0.30.6",
+    "pydantic==2.12.5",
+    "model-library==0.1.7",
+    "aiohttp==3.11.18",
+    "backoff==2.2.1",
+    "beautifulsoup4==4.12.3",
+    "python-dotenv==1.2.1",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest==8.3.4",
+    "pytest-asyncio==0.24.0",
+    "httpx==0.28.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"

@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+logs/
+results/
+.env
+cache/*
+!cache/manifest.json
