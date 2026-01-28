@@ -89,7 +89,7 @@ def test_message_send_returns_task(agent_url):
     assert "id" in task
     assert "status" in task and isinstance(task["status"], dict)
     assert "state" in task["status"]
-    assert task["status"]["state"] == "TASK_STATE_REJECTED"
+    assert task["status"]["state"] == "TASK_STATE_COMPLETED"
 
 
 def test_message_stream_emits_events(agent_url):

@@ -211,7 +211,21 @@ async def evaluate_participant(
     start = time.perf_counter()
 
     async with aiohttp.ClientSession() as session:
-        _, agent_url = await fetch_agent_card(session, url, config.timeout_seconds)
+        try:
+            _, agent_url = await fetch_agent_card(
+                session, url, config.timeout_seconds
+            )
+        except Exception as exc:  # noqa: BLE001 - surface connection errors
+            summary = summarize_results([])
+            summary["duration_seconds"] = round(time.perf_counter() - start, 3)
+            summary["errors"] = 1
+            return {
+                "role": role,
+                "url": url,
+                "summary": summary,
+                "results": [],
+                "error": str(exc),
+            }
         for idx, row in enumerate(questions):
             question = (row.get("Question") or "").strip()
             rubric = row.get("Rubric") or ""
@@ -266,9 +280,6 @@ async def run_assessment(request_json: str) -> tuple[dict[str, Any], EvalConfig]
         raise ValueError(exc.json()) from exc
 
     config = parse_eval_config(request.config)
-    if not config.allow_network:
-        raise ValueError("Network access is disabled. Set allowNetwork=true to run evaluation.")
-
     if config.participant_role not in request.participants:
         raise ValueError(
             f"Missing required participant role '{config.participant_role}'."
