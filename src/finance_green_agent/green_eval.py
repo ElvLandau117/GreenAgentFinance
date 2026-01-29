@@ -6,6 +6,7 @@ import os
 import time
 from dataclasses import dataclass
 from typing import Any
+from uuid import uuid4
 
 import aiohttp
 from pydantic import BaseModel, Field, ValidationError
@@ -109,7 +110,10 @@ def merge_parts(parts: list[dict[str, Any]]) -> str:
 def extract_text_from_message(message: dict[str, Any]) -> str:
     if not isinstance(message, dict):
         return ""
-    return merge_parts(message.get("content", []))
+    parts = message.get("content")
+    if parts is None:
+        parts = message.get("parts")
+    return merge_parts(parts or [])
 
 
 def extract_text_from_task(task: dict[str, Any]) -> str:
@@ -145,17 +149,23 @@ async def send_message(
     timeout: float,
 ) -> ParticipantAnswer:
     payload: dict[str, Any] = {
-        "message": {
-            "messageId": message_id,
-            "contextId": context_id,
-            "role": "ROLE_USER",
-            "content": [{"text": question}],
+        "jsonrpc": "2.0",
+        "id": uuid4().hex,
+        "method": "message/send",
+        "params": {
+            "message": {
+                "kind": "message",
+                "messageId": message_id,
+                "contextId": context_id,
+                "role": "user",
+                "parts": [{"kind": "text", "text": question}],
+            },
+            "configuration": {"acceptedOutputModes": ["text"]},
         },
-        "configuration": {"acceptedOutputModes": ["text"]},
     }
     try:
         async with session.post(
-            agent_url.rstrip("/") + "/v1/message:send",
+            agent_url.rstrip("/") + "/",
             json=payload,
             timeout=timeout,
         ) as response:
@@ -164,17 +174,27 @@ async def send_message(
     except Exception as exc:  # noqa: BLE001 - capture transport errors
         return ParticipantAnswer(text="", raw=None, context_id=context_id, error=str(exc))
 
-    answer_text = ""
-    if "message" in data:
-        answer_text = extract_text_from_message(data.get("message", {}))
-    elif "task" in data:
-        answer_text = extract_text_from_task(data.get("task", {}))
+    payload_result = data.get("result") if isinstance(data, dict) else None
+    if isinstance(payload_result, dict):
+        envelope = payload_result
+    else:
+        envelope = data
 
+    answer_text = ""
     response_context = None
-    if isinstance(data.get("message"), dict):
-        response_context = data["message"].get("contextId")
-    elif isinstance(data.get("task"), dict):
-        response_context = data["task"].get("contextId")
+    if isinstance(envelope, dict):
+        if "message" in envelope and isinstance(envelope.get("message"), dict):
+            answer_text = extract_text_from_message(envelope.get("message", {}))
+            response_context = envelope["message"].get("contextId")
+        elif "task" in envelope and isinstance(envelope.get("task"), dict):
+            answer_text = extract_text_from_task(envelope.get("task", {}))
+            response_context = envelope["task"].get("contextId")
+        elif envelope.get("kind") == "message":
+            answer_text = merge_parts(envelope.get("parts") or envelope.get("content") or [])
+            response_context = envelope.get("contextId")
+        elif envelope.get("kind") == "task":
+            answer_text = extract_text_from_task(envelope)
+            response_context = envelope.get("contextId")
 
     return ParticipantAnswer(
         text=answer_text,
