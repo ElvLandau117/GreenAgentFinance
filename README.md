@@ -288,7 +288,7 @@ allowNetwork = false   # Network disabled during evaluation
 
 | Repository | Purpose |
 |------------|---------|
-| [purple-agent-finance](https://github.com/elvlandau117/purple-agent-finance) | Participant agent (competitor) |
+| [purple-agent-finance](https://github.com/elvlandau117/purple-agent-finance) | Participant agent (competitor) | **Based on https://github.com/vals-ai/finance-agent/tree/main** (Main repo of the finance analyst made by the authors of the paper found in https://arxiv.org/pdf/2508.00828)
 | [GreenAgentFinance-Leaderboard](https://github.com/elvlandau117/GreenAgentFinance-Leaderboard) | Orchestrator (CI/CD + Docker Compose) |
 
 ---
