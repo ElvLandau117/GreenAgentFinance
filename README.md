@@ -212,15 +212,14 @@ src/finance_green_agent/
 
 ---
 
-## 8. Offline Tools
+## 8. Tools
 
-All tools use a local cache for deterministic evaluation:
 
 | Tool | Description |
 |------|-------------|
-| `offline_web_search` | Search pre-downloaded web pages |
-| `offline_edgar_search` | Search pre-downloaded SEC filings |
-| `parse_cached_html` | Extract text from cached HTML |
+| `web_search` | Search  web pages |
+| `edgar_search` | Search pre-downloaded SEC filings |
+| `parse_html` | Extract text from cached HTML |
 | `citation_validator` | Validate source citations |
 
 ---
