@@ -10,6 +10,9 @@ The **Green Agent** constitutes the core evaluation framework for the AgentBeats
 
 The evaluation framework addresses a fundamental challenge in financial AI: the ability to accurately retrieve, synthesize, and present financial information from authoritative sources while maintaining factual correctness and citation integrity.
 
+## 1.1. Video presentation
+You can see the proyect overview here: https://youtu.be/Gb1swCYEp0E
+
 ---
 
 ## 2. Evaluation Scope
