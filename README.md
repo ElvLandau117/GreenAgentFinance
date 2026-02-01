@@ -292,7 +292,7 @@ allowNetwork = false   # Network disabled during evaluation
 | [GreenAgentFinance-Leaderboard](https://github.com/elvlandau117/GreenAgentFinance-Leaderboard) | Orchestrator (CI/CD + Docker Compose) |
 
 ---
-**Based on https://github.com/vals-ai/finance-agent/tree/main** (Main repo of the finance analyst made by the authors of the paper found in https://arxiv.org/pdf/2508.00828)
+**The purple agent is Based on https://github.com/vals-ai/finance-agent/tree/main** (Main repo of the finance analyst made by the authors of the paper found in https://arxiv.org/pdf/2508.00828)
 
 ## License
 
